@@ -70,7 +70,7 @@
 		var isAuth = false;
 		if(accessToken) {
 			api.setAccessToken(accessToken);
-			 $(location).attr('href','http://steemtree.com'); 
+// 			 $(location).attr('href','http://steemtree.com'); 
 			
 			api.me(function (err, res) {
 				console.log('/me', err, res);
@@ -84,8 +84,6 @@
 					//do more
 					console.log("logged in user: " + username);
 					console.log(JSON.stringify(res.user_metadata, null, 2));
-			    
-			    
 		    }
 				
 				var user = res.user;
