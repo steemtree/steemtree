@@ -3,22 +3,61 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  </head>
-  <body>
-    <h1>SteemConnect2 Tutorial</h1>
-    <a href="#" class="login">Login with Steem</a>
     <script src="js/sc2.min.js"></script>
-    <script>
-    var api = sc2.Initialize({
+    <script type="text/javascript">
+    	//<![CDATA[
+      var api = sc2.Initialize({
       app: 'steemtree',
       callbackURL: 'http://steemtree.com',
       scope: ['vote', 'comment']
     });
-
-    var link = api.getLoginURL();
-    console.log('SteemConnect2 getLoginURL:', link);
+      
+    var loginURL = api.getLoginURL();
+    console.log('SteemConnect2 getLoginURL:', loginURL);
     var loginButton = document.querySelector('.login');
     loginButton.setAttribute('href', link);
-    </script>
-  </body>
+      
+// 		sc2.init({
+// 			baseURL: 'https://v2.steemconnect.com',
+// 			app : 'familyprojects',
+// 			callbackURL : 'http://localhost:8080',
+// 			scope: ['vote', 'comment']
+// 		});
+		var isAuth = false;
+		const accessToken = new URL(window.location).searchParams.get('access_token');
+		const expiresIn = new URL(window.location).searchParams.get('expires_in');
+		if (accessToken) {
+			api.setAccessToken(accessToken);
+			api.me(function (err, result) {
+		        console.log('/me', err, result);
+		        if (!err) {
+				isAuth = true;
+				var username = result.account;
+				//do more
+				console.log("logged in user: " + username);
+				console.log(JSON.stringify(result.user_metadata, null, 2));
+		        }
+	        });
+		}
+		function redirect() {
+			console.log(loginURL)
+			//window.location = loginURL;
+		}
+		
+		function logout() {
+			api.revokeToken(function (err, result) {
+		        console.log('You successfully logged out', err, result);
+	      });
+		}
+	//]]>
+	</script>
+  </head>
+  <body>
+    <h1>SteemConnect2 Tutorial</h1>
+    <a href="#" class="login">Login with Steem</a>
+    
+	<a href="#" onClick="redirect()">Log In</a>
+	<a href="https://steemconnect.com/logout">Log Out</a>
+	
+</body>
 </html>
