@@ -12,7 +12,7 @@
 		<h1>SteemConnectV2 Test</h1>
 
 		<div id="loading">
-			<img src="../../img/icon/spinner-red.svg" />
+<!-- 			<img src="../../img/icon/spinner-red.svg" /> -->
 		</div>
 
 		<div id="logged-out" class="collapse">
@@ -60,18 +60,31 @@
 			
 		var currentUrl = location.origin + location.pathname.replace('index.html', '');
 		var accessToken = getParameterByName('access_token');
+		console.log(accessToken);
 			
-      var api = sc2.Initialize({
+    var api = sc2.Initialize({
       app: 'steemtree',
       callbackURL: 'http://steemtree.com',
       scope: ['vote', 'comment']
     });
 			
+		var isAuth = false;
 		if(accessToken) {
+			api.setAccessToken(accessToken);
 			api.me(function (err, res) {
+				console.log('/me', err, result);
 				if(res === null) {
 					return;
 				}
+				
+		    if (!err) {
+					isAuth = true;
+					var username = result.account;
+					//do more
+					console.log("logged in user: " + username);
+					console.log(JSON.stringify(result.user_metadata, null, 2));
+		    }
+				
 				var user = res.user;
 				$('#user').text('@' + user).prop('href', 'https://steemit.com/@' + user);
 				$('#send-btn').click(function() {
