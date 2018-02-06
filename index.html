@@ -70,15 +70,7 @@
 		var isAuth = false;
 		if(accessToken) {
 			api.setAccessToken(accessToken);
-			  
-			api.isAuth(function(err, result) {
-				console.log(err,result);
-				if (!err && result.isAuthenticated) {
-					window.opener.document.location.reload(true);       //Reload Opener Page
-					window.close();                                     //Close this page
-				}
-			});
-			
+			 
 			
 			api.me(function (err, res) {
 				console.log('/me', err, res);
@@ -92,6 +84,11 @@
 					//do more
 					console.log("logged in user: " + username);
 					console.log(JSON.stringify(res.user_metadata, null, 2));
+			    
+			    
+					window.opener.document.location.reload(true);       //Reload Opener Page
+					window.close();                                     //Close this page
+			    
 		    }
 				
 				var user = res.user;
