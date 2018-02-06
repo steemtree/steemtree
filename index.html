@@ -2,59 +2,108 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title>SteemTree</title>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   </head>
   <body>
     <h1>SteemConnect2 Tutorial</h1>
+		<div class="container text-center">
+		<h1>SteemConnectV2 Test</h1>
+
+		<div id="loading">
+			<img src="../../img/icon/spinner-red.svg" />
+		</div>
+
+		<div id="logged-out" class="collapse">
+			<button type="button" id="login-btn" class="btn btn-primary"><span class="glyphicon glyphicon-user"></span> Login via SteemConnect</button>
+		</div>
+
+		<div id="logged-in" class="collapse">
+			<div style="margin-bottom:20px">
+				Logged in as <a id="user" target="_blank"></a>
+			</div>
+
+			<button type="button" id="send-btn" class="btn btn-success"><span class="glyphicon glyphicon-usd"></span> Send 0.001 SBD to @steemtree</button>
+
+			<button type="button" id="logout-btn" class="btn btn-default"></span> Logout</button>
+		</div>
+	</div>
+
+	<div>
     <a href="#" class="login">Login with Steem</a>
-    
 		<a href="#" onClick="redirect()">Log In</a>
 		<a href="https://steemconnect.com/logout">Log Out</a>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
+	<script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
 	<script src="js/sc2.min.js"></script>
+  
     <script type="text/javascript">
     	//<![CDATA[
+		// https://github.com/steemit/sc2-sdk
+		function getParameterByName(name, url) {
+		    if (!url) url = window.location.href;
+		    name = name.replace(/[\[\]]/g, "\\$&");
+		    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+		        results = regex.exec(url);
+		    if (!results) return '';
+		    if (!results[2]) return '';
+		    return decodeURIComponent(results[2].replace(/\+/g, " "));
+		}
+			
+// 		const accessToken = new URL(window.location).searchParams.get('access_token');
+// 		const expiresIn = new URL(window.location).searchParams.get('expires_in');
+			
+		var currentUrl = location.origin + location.pathname.replace('index.html', '');
+		var accessToken = getParameterByName('access_token');
+			
       var api = sc2.Initialize({
       app: 'steemtree',
       callbackURL: 'http://steemtree.com',
       scope: ['vote', 'comment']
     });
-      
-    var loginURL = api.getLoginURL();
-    console.log('SteemConnect2 getLoginURL:', loginURL);
-    var loginButton = document.querySelector('.login');
-    loginButton.setAttribute('href', loginURL);
-      
-// 		sc2.init({
-// 			baseURL: 'https://v2.steemconnect.com',
-// 			app : 'familyprojects',
-// 			callbackURL : 'http://localhost:8080',
-// 			scope: ['vote', 'comment']
-// 		});
-		var isAuth = false;
-		const accessToken = new URL(window.location).searchParams.get('access_token');
-		const expiresIn = new URL(window.location).searchParams.get('expires_in');
-		if (accessToken) {
-			api.setAccessToken(accessToken);
-			api.me(function (err, result) {
-		        console.log('/me', err, result);
-		        if (!err) {
-				isAuth = true;
-				var username = result.account;
-				//do more
-				console.log("logged in user: " + username);
-				console.log(JSON.stringify(result.user_metadata, null, 2));
-		        }
-	        });
-		}
-		function redirect() {
-			console.log(loginURL)
-			//window.location = loginURL;
-		}
-		
-		function logout() {
-			api.revokeToken(function (err, result) {
+			
+		if(accessToken) {
+			api.me(function (err, res) {
+				if(res === null) {
+					return;
+				}
+				var user = res.user;
+				$('#user').text('@' + user).prop('href', 'https://steemit.com/@' + user);
+				$('#send-btn').click(function() {
+					location.href = api.sign('transfer', {
+						from: res.user,
+						to: 'recrack',
+						amount: '0.001 SBD',
+						memo: uuid.v4(),
+					}, location.href);
+				});
+				$('#logout-btn').click(function() {
+					$('#logged-in').hide();
+					$('#loading').show();
+					
+					api.revokeToken(function (err, res) {
+						if(err === null) {
+							location.href = currentUrl;
+						}
+						
 		        console.log('You successfully logged out', err, result);
-	      });
+					});
+				});
+				$('#loading').hide();
+				$('#logged-in').show();
+			});
+		}
+		else {
+			$('#login-btn').click(function() {
+				location.href = api.getLoginURL();
+			});
+			$('#loading').hide();
+			$('#logged-out').show();
 		}
 	//]]>
 	</script>
