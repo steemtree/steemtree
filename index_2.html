@@ -29,19 +29,21 @@
 		</div>
 	</div>
 
-<!-- 	<div>
+<!--
+	<div>
     <a href="#" class="login">Login with Steem</a>
 		<a href="#" onClick="redirect()">Log In</a>
 		<a href="https://steemconnect.com/logout">Log Out</a>
-	</div> -->
+	</div>
+-->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
 	<script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
 	<script src="js/sc2.min.js"></script>
-  
-    <script type="text/javascript">
+
+  <script type="text/javascript">
     	//<![CDATA[
 		// https://github.com/steemit/sc2-sdk
 		function getParameterByName(name, url) {
@@ -53,24 +55,41 @@
 		    if (!results[2]) return '';
 		    return decodeURIComponent(results[2].replace(/\+/g, " "));
 		}
-			
-// 		const accessToken = new URL(window.location).searchParams.get('access_token');
-// 		const expiresIn = new URL(window.location).searchParams.get('expires_in');
-			
-		var currentUrl = location.origin + location.pathname.replace('index.html', '');
 		var accessToken = getParameterByName('access_token');
+
+		const accessToken = new URL(window.location).searchParams.get('access_token');
+		const expiresIn = new URL(window.location).searchParams.get('expires_in');
+		const username = new URL(window.location).searchParams.get('username');
+
+		var currentUrl = location.origin + location.pathname.replace('index.html', '');
 		console.log("accessToken: " + accessToken);
-			
+
     var api = sc2.Initialize({
       app: 'steemtree',
       callbackURL: 'http://steemtree.com',
       scope: ['vote', 'comment']
     });
-			
+
 		var isAuth = false;
 		if(accessToken) {
 			api.setAccessToken(accessToken);
 // 			 $(location).attr('href','http://steemtree.com'); 
+
+			
+			localStorage.setItem('access_token', accessToken);
+			localStorage.setItem('expires_in', expiresIn);
+			localStorage.setItem('auth_timestamp', Math.round(Date.now()/1000));
+			localStorage.setItem('username', username);
+			window.location.href = '//' + location.host + location.pathname;
+
+			var callbackURL = location.protocol + '//' + location.host + location.pathname;
+			var accessToken = localStorage.getItem('access_token');
+			var expiresIn = localStorage.getItem('expires_in');
+			var authTimestamp = localStorage.getItem('auth_timestamp');
+			var api;
+			var logoutButton = document.querySelector('.logout');
+			var loginButton = document.querySelector('.login');
+			var currentTimestamp = Math.round(Date.now()/1000);
 			
 			api.me(function (err, res) {
 				console.log('/me', err, res);
