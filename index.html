@@ -171,9 +171,20 @@
                 $('#loading').show();
                 
                 api.revokeToken(function (err, res) {
-                    if(err === null) {
-                        location.href = currentUrl;
-                    }
+                  console.log(err, res);
+                  localStorage.removeItem('access_token');
+                  localStorage.removeItem('expires_in');
+                  localStorage.removeItem('username');
+                  localStorage.removeItem('auth_timestamp');
+
+                  logoutButton.style.display = 'none';
+                  loginButton.style.display = 'block';
+                  var link = api.getLoginURL();
+                  loginButton.setAttribute('href', link);
+
+                    // if(err === null) {
+                    //     location.href = currentUrl;
+                    // }
                     
                     console.log('You successfully logged out', err, res);
                 });
