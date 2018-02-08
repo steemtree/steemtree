@@ -4,16 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
   </head>
   <body>
-    <h1>SteemConnect2 Tutorial</h1>
-    <a href="#" class="login">Login with Steem</a>
-    <a href="#" class="logout">Logout</a>
-    
-    
     <div class="container text-center">
-
+      <h1>SteemConnect2 Tutorial</h1>
+      <a href="#" class="login">Login with Steem</a>
+      <a href="#" class="logout">Logout</a>
+        
       <div id="loading">Loading...
   <!-- 			<img src="../../img/icon/spinner-red.svg" /> -->
       </div>
@@ -26,12 +23,10 @@
         <div style="margin-bottom:20px">
           Logged in as <a id="user" target="_blank"></a>
         </div>
-
         <button type="button" id="send-btn" class="btn btn-success"><span class="glyphicon glyphicon-usd"></span> Send 0.001 SBD to @steemtree</button>
-
         <button type="button" id="logout-btn" class="btn btn-default"></span> Logout</button>
       </div>
-	  </div>
+	</div>
   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
@@ -148,10 +143,10 @@
       console.log('Hi, ', username);
       
       api.me(function (err, res) {
-				console.log('/me', err, res);
-				if(res === null) {
-					return;
-				}
+            console.log('/me', err, res);
+            if(res === null) {
+                return;
+            }
 				
 		    if (!err) {
 					isAuth = true;
@@ -160,40 +155,39 @@
 					console.log("logged in user: " + username);
 					console.log(JSON.stringify(res.user_metadata, null, 2));
 		    }
-				
-				var user = res.user;
-				$('#user').text('@' + user).prop('href', 'https://steemit.com/@' + user);
-				$('#send-btn').click(function() {
-					location.href = api.sign('transfer', {
-						from: res.user,
-						to: 'recrack',
-						amount: '0.001 SBD',
-						memo: uuid.v4(),
-					}, location.href);
-				});
-				$('#logout-btn').click(function() {
-					$('#logged-in').hide();
-					$('#loading').show();
-					
-					api.revokeToken(function (err, res) {
-						if(err === null) {
-							location.href = currentUrl;
-						}
-						
-		        console.log('You successfully logged out', err, res);
-					});
-				});
-				$('#loading').hide();
-				$('#logged-in').show();
-			});
-      
+
+            var user = res.user;
+            $('#user').text('@' + user).prop('href', 'https://steemit.com/@' + user);
+            $('#send-btn').click(function() {
+                location.href = api.sign('transfer', {
+                    from: res.user,
+                    to: 'recrack',
+                    amount: '0.001 SBD',
+                    memo: uuid.v4(),
+                }, location.href);
+            });
+            $('#logout-btn').click(function() {
+                $('#logged-in').hide();
+                $('#loading').show();
+                
+                api.revokeToken(function (err, res) {
+                    if(err === null) {
+                        location.href = currentUrl;
+                    }
+                    
+                    console.log('You successfully logged out', err, res);
+                });
+            });
+            $('#loading').hide();
+            $('#logged-in').show();
+        });
     }else {
-			$('#login-btn').click(function() {
-				location.href = api.getLoginURL();
-			});
-			$('#loading').hide();
-			$('#logged-out').show();
-		}
+        $('#login-btn').click(function() {
+            location.href = api.getLoginURL();
+        });
+        $('#loading').hide();
+        $('#logged-out').show();
+	}
     </script>
   </body>
 </html>
