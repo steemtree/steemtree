@@ -32,7 +32,7 @@
         window.location.href = '//' + location.host + location.pathname;
     }
 
-    var callbackURL = location.protocol + '//' + location.host + location.pathname;
+    var callbackURL = "http://steemtree.com";//location.protocol + '//' + location.host + location.pathname;
     var accessToken = localStorage.getItem('access_token');
     var expiresIn = localStorage.getItem('expires_in');
     var authTimestamp = localStorage.getItem('auth_timestamp');
@@ -65,7 +65,7 @@
       if (accessToken !== null) {
         // 이전에 저장된 액세스토큰이 있는 경우
         api = sc2.Initialize({
-            app: 'sc2tut',
+            app: 'steemtree',
             callbackURL: callbackURL,
             accessToken: accessToken,
             scope: ['vote', 'comment']
