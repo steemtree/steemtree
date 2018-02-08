@@ -187,7 +187,13 @@
 				$('#logged-in').show();
 			});
       
-    }
+    }else {
+			$('#login-btn').click(function() {
+				location.href = api.getLoginURL();
+			});
+			$('#loading').hide();
+			$('#logged-out').show();
+		}
     </script>
   </body>
 </html>
