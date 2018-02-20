@@ -213,6 +213,13 @@
     messagingSenderId: "664751836833"
   };
   firebase.initializeApp(config);
+var counterRef = firebase.database().ref('counter');
+	var counter;
+	counterRef.once('value').then(function(dataSnapshot){
+		counter = dataSnapshot.val() + 1;
+		counterRef.set(counter);
+		document.getElementById('pageviews').innerHTML = counter;
+	});
 </script>
   </body>
 </html>
